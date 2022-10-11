@@ -1,6 +1,9 @@
 import connection from "../db.js";
-import { signUpSchema } from "../middlewares/schemas/authSchema.js";
-import bcrypt from "bcrypt";
+import {
+  signUpSchema,
+  signInSchema,
+} from "../middlewares/schemas/authSchema.js";
+import bcrypt, { compareSync } from "bcrypt";
 
 export async function signUp(req, res) {
   const validation = signUpSchema.validate(req.body, { abortEarly: false });
@@ -34,9 +37,43 @@ export async function signUp(req, res) {
 }
 
 export async function signIn(req, res) {
-  try {
-    res.send("rota para fazer login");
+  const validation = signInSchema.validate(req.body, { abortEarly: false });
+  if (validation.error) {
+    res
+      .status(422)
+      .send(validation.error.details.map((value) => value.message));
     return;
+  }
+  try {
+    const promisse = await connection.query(
+      "SELECT * FROM users WHERE email=$1",
+      [req.body.email]
+    );
+
+    if (
+      promisse.rows[0].email &&
+      bcrypt.compareSync(req.body.password, promisse.rows[0].password)
+    ) {
+      const session = await connection.query(
+        `SELECT * FROM sessions WHERE "userId"=$1`,
+        [promisse.rows[0].id]
+      );
+      if (session.rows[0].id) {
+        res.status(200).send({ token: session.rows[0].token });
+        return;
+      } else {
+        const token = uuid();
+        await connection.query(
+          `INSERT INTO sessions ("userId", token) VALUES ($1, $2)`,
+          [promisse.rows[0].id, token]
+        );
+        res.status(200).send({ token: token });
+        return;
+      }
+    } else {
+      res.sendStatus(401);
+      return;
+    }
   } catch (error) {
     res.status(500).send(error.message);
     return;
