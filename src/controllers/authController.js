@@ -54,22 +54,13 @@ export async function signIn(req, res) {
       promisse.rows[0].email &&
       bcrypt.compareSync(req.body.password, promisse.rows[0].password)
     ) {
-      const session = await connection.query(
-        `SELECT * FROM sessions WHERE "userId"=$1`,
-        [promisse.rows[0].id]
+      const token = uuid();
+      await connection.query(
+        `INSERT INTO sessions ("userId", token) VALUES ($1, $2)`,
+        [promisse.rows[0].id, token]
       );
-      if (session.rows[0].id) {
-        res.status(200).send({ token: session.rows[0].token });
-        return;
-      } else {
-        const token = uuid();
-        await connection.query(
-          `INSERT INTO sessions ("userId", token) VALUES ($1, $2)`,
-          [promisse.rows[0].id, token]
-        );
-        res.status(200).send({ token: token });
-        return;
-      }
+      res.status(200).send({ token: token });
+      return;
     } else {
       res.sendStatus(401);
       return;
