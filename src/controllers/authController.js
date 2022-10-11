@@ -3,7 +3,7 @@ import {
   signUpSchema,
   signInSchema,
 } from "../middlewares/schemas/authSchema.js";
-import bcrypt, { compareSync } from "bcrypt";
+import bcrypt from "bcrypt";
 
 export async function signUp(req, res) {
   const validation = signUpSchema.validate(req.body, { abortEarly: false });
