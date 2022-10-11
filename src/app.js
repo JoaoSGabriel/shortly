@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routes/authRouter.js";
 dotenv.config();
+import { nanoid } from "nanoid";
 
 const app = express();
 app.use(express.json());
