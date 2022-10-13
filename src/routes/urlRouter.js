@@ -17,4 +17,4 @@ urlRouter.use(privateToken);
 urlRouter.delete("/urls/:id", deleteUrl);
 urlRouter.post("/urls/shorten", postShortlyURL);
 
-export default authRouter;
+export default urlRouter;

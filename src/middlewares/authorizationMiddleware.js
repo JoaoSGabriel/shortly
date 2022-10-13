@@ -11,6 +11,7 @@ async function privateToken(req, res, next) {
   );
   if (session.rows.length === 0) return res.sendStatus(401);
 
+  res.locals.user = session.rows[0].userId;
   next();
 }
 

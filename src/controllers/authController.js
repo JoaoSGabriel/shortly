@@ -15,13 +15,13 @@ export async function signUp(req, res) {
   }
   try {
     const promisse = await connection.query(
-      "SELECT * FROM users WHERE email=$1",
+      "SELECT * FROM users WHERE email=$1;",
       [req.body.email]
     );
     if (promisse.rows.length === 0) {
       const cryptPassword = bcrypt.hashSync(req.body.password, 10);
       await connection.query(
-        "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+        "INSERT INTO users (name, email, password) VALUES ($1, $2, $3);",
         [req.body.name, req.body.email, cryptPassword]
       );
       res.sendStatus(201);
@@ -46,7 +46,7 @@ export async function signIn(req, res) {
   }
   try {
     const promisse = await connection.query(
-      "SELECT * FROM users WHERE email=$1",
+      "SELECT * FROM users WHERE email=$1;",
       [req.body.email]
     );
 
@@ -56,7 +56,7 @@ export async function signIn(req, res) {
     ) {
       const token = uuid();
       await connection.query(
-        `INSERT INTO sessions ("userId", token) VALUES ($1, $2)`,
+        `INSERT INTO sessions ("userId", token) VALUES ($1, $2);`,
         [promisse.rows[0].id, token]
       );
       res.status(200).send({ token: token });
