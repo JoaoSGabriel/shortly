@@ -11,6 +11,5 @@ const connection = new Pool({
   password: "123456",
   database: process.env.DATABASE_URL,
 });
-console.log(connection.database);
 
 export default connection;

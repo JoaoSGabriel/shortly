@@ -3,6 +3,7 @@ import {
   signUpSchema,
   signInSchema,
 } from "../middlewares/schemas/authSchema.js";
+import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
 
 export async function signUp(req, res) {
