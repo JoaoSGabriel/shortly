@@ -5,8 +5,8 @@ export async function postShortlyURL(req, res) {
     if (new URL(req.body.url)) {
       const shortUrl = nanoid(10);
       await connection.query(
-        "INSERT INTO urls (shortUrl, url) VALUES ($1, $2);",
-        [req.body.url, shortUrl]
+        `INSERT INTO urls ("userId", url, shortUrl, "visitCount") VALUES ($1, $2, $3, $4);`,
+        [res.locals.user, req.body.url, shortUrl, 0]
       );
       res.status(201).send({ shortUrl });
     } else {
@@ -22,7 +22,7 @@ export async function getUniqueUrl(req, res) {
 
   try {
     const url = await connection.query(
-      "SELECT id,shortUrl,url FROM urls WHERE id=$1;",
+      `SELECT id,"shortUrl",url FROM urls WHERE id=$1;`,
       [id]
     );
     if (!url.rows[0].id) {

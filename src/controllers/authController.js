@@ -13,6 +13,11 @@ export async function signUp(req, res) {
       .send(validation.error.details.map((value) => value.message));
     return;
   }
+  if (req.body.password !== req.body.confirmPassword) {
+    res.status(422).send("As senhas precisam ser iguais");
+    return;
+  }
+
   try {
     const promisse = await connection.query(
       "SELECT * FROM users WHERE email=$1;",
