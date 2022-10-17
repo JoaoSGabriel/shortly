@@ -34,7 +34,7 @@ export async function getUserUrls(req, res) {
 export async function getRanking(req, res) {
   try {
     const promisse = await connection.query(
-      `SELECT users.id, users.name, COUNT(urls."userId") as "linksCount", SUM(urls."visitCount") as "visitCount" FROM urls FULL JOIN users ON urls."userId" = users.id GROUP BY users.id ORDER BY "visitCount" DESC LIMIT 10;`
+      `SELECT users.id, users.name, COUNT(urls."userId") as "linksCount", SUM(urls."visitCount") as "visitCount" FROM urls LEFT JOIN users ON urls."userId" = users.id GROUP BY users.id ORDER BY "visitCount" DESC LIMIT 10;`
     );
 
     res.status(200).send(promisse.rows);
