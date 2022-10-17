@@ -6,8 +6,6 @@ const userRouter = Router();
 
 userRouter.get("/ranking", getRanking);
 
-userRouter.use(privateToken);
-
-userRouter.get("/users/me", getUserUrls);
+userRouter.get("/users/me", privateToken, getUserUrls);
 
 export default userRouter;
